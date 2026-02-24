@@ -4,15 +4,15 @@ import numpy as np
 from PIL import Image
 from sklearn.cluster import MiniBatchKMeans
 
-st.set_page_config(page_title="AI Show Palettes", page_icon="🎭")
-st.title("🎭 AI Showstopper Palettes")
+st.set_page_config(page_title="Movie AI Colour Palettes", page_icon="🎬")
+st.title("🎬 Movie AI Colour Palettes")
 
 if 'pref' not in st.session_state:
     st.session_state.pref = {"sat": 0.5, "bri": 0.5}
 
 API_KEY = "12ccbc23d6be9dc1b2855c9685c441d8" 
 
-query = st.text_input("Search for a Musical, Movie, or TV Show:", "Wicked")
+query = st.text_input("Search for a Musical, Movie, or TV Show:")
 
 if query:
     url = f"https://api.themoviedb.org/3/search/multi?api_key={API_KEY}&query={query}"
@@ -30,11 +30,7 @@ if query:
             
             name = m.get('title') or m.get('name')
             raw_date = m.get('release_date') or m.get('first_air_date')
-            
-            tag = " [Movie]" if media_type == "movie" else " [TV]"
-            date_label = f" ({raw_date[:4]})" if raw_date else ""
-            
-            options.append(f"{name}{date_label}{tag}")
+            options.append(f"{name}{date_label}")
             filtered_results.append(m)
 
         if len(filtered_results) > 0:

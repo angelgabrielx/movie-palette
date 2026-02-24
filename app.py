@@ -18,80 +18,80 @@ if query:
     response = requests.get(url)
     res = response.json()
     
-  if 'results' in res:
-        options = []
-        filtered_results = []
+if 'results' in res:
+    options = []
+    filtered_results = []
 
-        for m in res['results']:
-            if m.get('media_type') == 'person':
-                continue
-            
-            name = m.get('title') or m.get('name')
-            raw_date = m.get('release_date') or m.get('first_air_date')
-            
-            date_label = f" ({raw_date[:4]})" if raw_date else ""
-            options.append(f"{name}{date_label}")
-            filtered_results.append(m)
+    for m in res['results']:
+        if m.get('media_type') == 'person':
+            continue
+        
+        name = m.get('title') or m.get('name')
+        raw_date = m.get('release_date') or m.get('first_air_date')
+        
+        date_label = f" ({raw_date[:4]})" if raw_date else ""
+        options.append(f"{name}{date_label}")
+        filtered_results.append(m)
 
-        if len(filtered_results) > 0:
-            if len(filtered_results) == 1:
-                selected_item = filtered_results[0]
-                st.write(f"Results for: **{options[0]}**")
-            else:
-                selection = st.selectbox("Which one did you mean?", options[:10])
-                idx = options.index(selection)
-                selected_item = filtered_results[idx]
-       
-            if selected_item.get('poster_path'):
-        if options:
+    if len(filtered_results) > 0:
+        if len(filtered_results) == 1:
+            selected_item = filtered_results[0]
+            st.write(f"Results for: **{options[0]}**")
+        else:
             selection = st.selectbox("Which one did you mean?", options[:10])
             idx = options.index(selection)
             selected_item = filtered_results[idx]
-            
-            if selected_item.get('poster_path'):
-                poster = f"https://image.tmdb.org/t/p/w500{selected_item['poster_path']}"
-                img = Image.open(requests.get(poster, stream=True).raw).convert('RGB')
-                img_array = np.array(img)
+   
+        if selected_item.get('poster_path'):
+            if options:
+                selection = st.selectbox("Which one did you mean?", options[:10])
+                idx = options.index(selection)
+                selected_item = filtered_results[idx]
                 
-                pixels = img_array.reshape(-1, 3)
-                model = MiniBatchKMeans(n_clusters=12, n_init=3).fit(pixels[::20])
-                candidates = model.cluster_centers_.astype(int)
-                
-                def get_score(c):
-                    sat = (max(c) - min(c)) / 255
-                    bri = (sum(c) / 3) / 255
-                    return abs(sat - st.session_state.pref["sat"]) + abs(bri - st.session_state.pref["bri"])
-
-                final_palette = sorted(candidates, key=get_score)[:5]
-                
-                col1, col2 = st.columns([1, 1])
-                with col1:
-                    st.image(img, use_container_width=True)
-                
-                with col2:
-                    st.subheader("AI Curated Palette")
-                    for c in final_palette:
-                        hex_c = '#%02x%02x%02x' % tuple(c)
-                        st.markdown(f'<div style="background-color:{hex_c}; padding:20px; border-radius:10px; margin-bottom:5px; color:white; font-weight:bold; text-shadow: 1px 1px 2px black;">{hex_c}</div>', unsafe_allow_html=True)
+                if selected_item.get('poster_path'):
+                    poster = f"https://image.tmdb.org/t/p/w500{selected_item['poster_path']}"
+                    img = Image.open(requests.get(poster, stream=True).raw).convert('RGB')
+                    img_array = np.array(img)
                     
-                    st.write("---")
-                    b1, b2 = st.columns(2)
+                    pixels = img_array.reshape(-1, 3)
+                    model = MiniBatchKMeans(n_clusters=12, n_init=3).fit(pixels[::20])
+                    candidates = model.cluster_centers_.astype(int)
                     
-                    if b1.button("💖 Love it"):
-                        avg_sat = np.mean([max(c)-min(c) for c in final_palette])/255
-                        avg_bri = np.mean([sum(c)/3 for c in final_palette])/255
-                        st.session_state.pref["sat"] += 0.1 * (avg_sat - st.session_state.pref["sat"])
-                        st.session_state.pref["bri"] += 0.1 * (avg_bri - st.session_state.pref["bri"])
-                        st.rerun()
-
-                    if b2.button("🗑️ Not for me"):
-                        st.session_state.pref["sat"] -= 0.05
-                        st.session_state.pref["bri"] -= 0.05
-                        st.rerun()
+                    def get_score(c):
+                        sat = (max(c) - min(c)) / 255
+                        bri = (sum(c) / 3) / 255
+                        return abs(sat - st.session_state.pref["sat"]) + abs(bri - st.session_state.pref["bri"])
+    
+                    final_palette = sorted(candidates, key=get_score)[:5]
+                    
+                    col1, col2 = st.columns([1, 1])
+                    with col1:
+                        st.image(img, use_container_width=True)
+                    
+                    with col2:
+                        st.subheader("AI Curated Palette")
+                        for c in final_palette:
+                            hex_c = '#%02x%02x%02x' % tuple(c)
+                            st.markdown(f'<div style="background-color:{hex_c}; padding:20px; border-radius:10px; margin-bottom:5px; color:white; font-weight:bold; text-shadow: 1px 1px 2px black;">{hex_c}</div>', unsafe_allow_html=True)
+                        
+                        st.write("---")
+                        b1, b2 = st.columns(2)
+                        
+                        if b1.button("💖 Love it"):
+                            avg_sat = np.mean([max(c)-min(c) for c in final_palette])/255
+                            avg_bri = np.mean([sum(c)/3 for c in final_palette])/255
+                            st.session_state.pref["sat"] += 0.1 * (avg_sat - st.session_state.pref["sat"])
+                            st.session_state.pref["bri"] += 0.1 * (avg_bri - st.session_state.pref["bri"])
+                            st.rerun()
+    
+                        if b2.button("🗑️ Not for me"):
+                            st.session_state.pref["sat"] -= 0.05
+                            st.session_state.pref["bri"] -= 0.05
+                            st.rerun()
+                else:
+                    st.warning("This item doesn't have a poster available!")
             else:
-                st.warning("This item doesn't have a poster available!")
-        else:
-            st.error("No movies or shows found for that search.")
+                st.error("No movies or shows found for that search.")
 
 with st.sidebar:
     st.write("### 🤖 Your AI Style Profile")

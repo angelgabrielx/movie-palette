@@ -30,7 +30,8 @@ if query:
             
             name = m.get('title') or m.get('name')
             raw_date = m.get('release_date') or m.get('first_air_date')
-            options.append(f"{name}{raw_date}")
+            date_label = f" ({raw_date[:4]})" if raw_date else ""
+            options.append(f"{name}{date_label}")
             filtered_results.append(m)
 
         if len(filtered_results) > 0:

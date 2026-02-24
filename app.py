@@ -41,15 +41,7 @@ if query:
             st.subheader("AI Curated Palette")
             for c in final_palette:
                 hex_c = '#%02x%02x%02x' % tuple(c)
-                st.markdown(f'<div style=
-                "background-color:{hex_c};
-                padding:20px;
-                border-radius:10px;
-                margin-bottom:5px;
-                color:white;
-                font-weight:bold;
-                text-shadow: 1px 1px 2px black;"
-                >{hex_c}</div>', unsafe_allow_html=True)
+                st.markdown(f'<div style="background-color:{hex_c}; padding:20px; border-radius:10px; margin-bottom:5px; color:white; font-weight:bold; text-shadow: 1px 1px 2px black;">{hex_c}</div>', unsafe_allow_html=True)
             
             st.write("---")
             b1, b2 = st.columns(2)

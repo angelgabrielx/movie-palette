@@ -10,7 +10,7 @@ st.title("🎭 AI Showstopper Palettes")
 if 'pref' not in st.session_state:
     st.session_state.pref = {"sat": 0.5, "bri": 0.5}
 
-API_KEY = "PASTE_YOUR_KEY_HERE"
+API_KEY = "12ccbc23d6be9dc1b2855c9685c441d8"
 query = st.text_input("Search for a Musical, Movie, or TV Show:", "Wicked")
 
 if query:

@@ -18,10 +18,10 @@ if query:
     response = requests.get(url)
     res = response.json()
     
-    if 'results' in res:
+  if 'results' in res:
         options = []
         filtered_results = []
-        
+
         for m in res['results']:
             if m.get('media_type') == 'person':
                 continue
@@ -33,6 +33,16 @@ if query:
             options.append(f"{name}{date_label}")
             filtered_results.append(m)
 
+        if len(filtered_results) > 0:
+            if len(filtered_results) == 1:
+                selected_item = filtered_results[0]
+                st.write(f"Results for: **{options[0]}**")
+            else:
+                selection = st.selectbox("Which one did you mean?", options[:10])
+                idx = options.index(selection)
+                selected_item = filtered_results[idx]
+       
+            if selected_item.get('poster_path'):
         if options:
             selection = st.selectbox("Which one did you mean?", options[:10])
             idx = options.index(selection)

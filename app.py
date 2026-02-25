@@ -72,18 +72,18 @@ if query:
                     st.write("---")
                     b1, b2 = st.columns(2)
                     
-                   if b1.button("💖 Like"):
-                        avg_sat = np.mean([max(c)-min(c) for c in final_palette])/255
-                        avg_bri = np.mean([sum(c)/3 for c in final_palette])/255
-                        st.session_state.pref["sat"] += 0.1 * (avg_sat - st.session_state.pref["sat"])
-                        st.session_state.pref["bri"] += 0.1 * (avg_bri - st.session_state.pref["bri"])
-                        st.rerun()
+                if b1.button("💖 Like"):
+                    avg_sat = np.mean([max(c)-min(c) for c in final_palette])/255
+                    avg_bri = np.mean([sum(c)/3 for c in final_palette])/255
+                    st.session_state.pref["sat"] += 0.1 * (avg_sat - st.session_state.pref["sat"])
+                    st.session_state.pref["bri"] += 0.1 * (avg_bri - st.session_state.pref["bri"])
+                    st.rerun()
 
-                    if b2.button("🗑️ Dislike"):
-                        import random
-                        st.session_state.pref["sat"] += random.uniform(-0.2, 0.2)
-                        st.session_state.pref["bri"] += random.uniform(-0.2, 0.2)
-                        st.rerun()
+                if b2.button("🗑️ Dislike"):
+                    import random
+                    st.session_state.pref["sat"] += random.uniform(-0.2, 0.2)
+                    st.session_state.pref["bri"] += random.uniform(-0.2, 0.2)
+                    st.rerun()
             else:
                 st.warning("This item doesn't have a poster available!")
         else:
